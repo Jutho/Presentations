@@ -382,8 +382,8 @@ $$\vert\Psi\rangle = \Psi_{00000}\vert 00000 \rangle + \Psi_{00001} \vert 00001\
 <li>automatic generation of efficient, specialized code for different argument types</li>
 </ul>
 </li>
-<li>Good support for computational science, numerics, multidimensional arrays, ...</li>
-<li>Powerful metaprogramming facilities</li>
+<li>Good support for computational science: numerics, statistics, multidimensional arrays, ...</li>
+<li>Homoiconic and powerful metaprogramming facilities</li>
 </ul>
 </li>
 </ul>
@@ -402,17 +402,44 @@ $$\vert\Psi\rangle = \Psi_{00000}\vert 00000 \rangle + \Psi_{00001} \vert 00001\
 </div><div class="fragment">
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[4]:</div>
+<div class="prompt input_prompt">In&nbsp;[1]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-julia"><pre><span class="k">function</span><span class="nf"> myabs</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">x</span> <span class="o">&lt;</span> <span class="mi">0</span>
         <span class="k">return</span> <span class="o">-</span><span class="n">x</span>
-    <span class="k">else</span>
-        <span class="k">return</span> <span class="n">x</span>
     <span class="k">end</span>
+    <span class="k">return</span> <span class="n">x</span>
 <span class="k">end</span>
-<span class="n">println</span><span class="p">(</span><span class="s">&quot;LLVM code for 64-bit integer&quot;</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area"><div class="prompt output_prompt">Out[1]:</div>
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>myabs (generic function with 1 method)</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div></div></section><section>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[2]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-julia"><pre><span class="n">println</span><span class="p">(</span><span class="s">&quot;LLVM code for 64-bit integer&quot;</span><span class="p">)</span>
 <span class="n">code_llvm</span><span class="p">(</span><span class="n">myabs</span><span class="p">,</span><span class="n">Tuple</span><span class="p">{</span><span class="kt">Int64</span><span class="p">})</span>
 <span class="n">println</span><span class="p">(</span><span class="s">&quot;LLVM code for 64-bit unsigned integer&quot;</span><span class="p">)</span>
 <span class="n">code_llvm</span><span class="p">(</span><span class="n">myabs</span><span class="p">,</span><span class="n">Tuple</span><span class="p">{</span><span class="n">UInt64</span><span class="p">})</span>
@@ -432,7 +459,7 @@ $$\vert\Psi\rangle = \Psi_{00000}\vert 00000 \rangle + \Psi_{00001} \vert 00001\
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>LLVM code for 64-bit integer
 
-define i64 @julia_myabs_21607(i64) {
+define i64 @julia_myabs_21625(i64) {
 top:
   %1 = icmp sgt i64 %0, -1
   br i1 %1, label %L, label %if
@@ -446,13 +473,13 @@ L:                                                ; preds = %top
 }
 LLVM code for 64-bit unsigned integer
 
-define i64 @julia_myabs_21608(i64) {
+define i64 @julia_myabs_21626(i64) {
 L:
   ret i64 %0
 }
 LLVM code for 64-bit floating point
 
-define double @julia_myabs_21609(double) {
+define double @julia_myabs_21627(double) {
 top:
   %1 = fcmp uge double %0, 0.000000e+00
   br i1 %1, label %L, label %if
@@ -471,7 +498,7 @@ L:                                                ; preds = %top
 </div>
 </div>
 
-</div></div></section><section>
+</div></section><section>
 <div class="cell border-box-sizing text_cell rendered">
 <div class="prompt input_prompt">
 </div>
@@ -480,10 +507,47 @@ L:                                                ; preds = %top
 <h4 id="Type-inference">Type inference<a class="anchor-link" href="#Type-inference">&#182;</a></h4>
 </div>
 </div>
-</div>
+</div><div class="fragment">
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[6]:</div>
+<div class="prompt input_prompt">In&nbsp;[3]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-julia"><pre><span class="n">mysqrt</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">=</span> <span class="n">x</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="o">?</span> <span class="n">sqrt</span><span class="p">(</span><span class="n">complex</span><span class="p">(</span><span class="n">x</span><span class="p">))</span> <span class="p">:</span> <span class="n">sqrt</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="n">code_typed</span><span class="p">(</span><span class="n">mysqrt</span><span class="p">,</span><span class="n">Tuple</span><span class="p">{</span><span class="kt">Float64</span><span class="p">})</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area"><div class="prompt output_prompt">Out[3]:</div>
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>1-element Array{Any,1}:
+ :($(Expr(:lambda, Any[:x], Any[Any[Any[:x,Float64,0],Any[symbol(&quot;##fy#7529&quot;),Float64,18]],Any[],Any[],Any[]], :(begin  # In[3], line 1:
+        ##fy#7529 = (Base.box)(Float64,(Base.sitofp)(Float64,0))
+        unless (Base.box)(Base.Bool,(Base.or_int)((Base.lt_float)(x::Float64,##fy#7529::Float64)::Bool,(Base.box)(Base.Bool,(Base.and_int)((Base.box)(Base.Bool,(Base.and_int)((Base.eq_float)(x::Float64,##fy#7529::Float64)::Bool,(Base.lt_float)(##fy#7529::Float64,9.223372036854776e18)::Bool)),(Base.slt_int)((Base.box)(Int64,(Base.fptosi)(Int64,##fy#7529::Float64)),0)::Bool)))) goto 0
+        return (Main.sqrt)($(Expr(:new, Complex{Float64}, :(x::Float64), :((Base.box)(Float64,(Base.sitofp)(Float64,0))))))::Complex{Float64}
+        0: 
+        return (Base.Math.box)(Base.Math.Float64,(Base.Math.sqrt_llvm)(x::Float64))::Float64
+    end::Union{Complex{Float64},Float64}))))</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div></div></section><section>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[4]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-julia"><pre><span class="k">function</span><span class="nf"> summyabs</span><span class="p">(</span><span class="n">v</span><span class="p">::</span><span class="n">Vector</span><span class="p">)</span>
@@ -491,9 +555,158 @@ L:                                                ; preds = %top
     <span class="k">for</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">2</span><span class="p">:</span><span class="n">length</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
         <span class="n">s</span> <span class="o">+=</span> <span class="n">myabs</span><span class="p">(</span><span class="n">v</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
     <span class="k">end</span>
-    <span class="k">return</span> <span class="n">s</span>
+    <span class="k">return</span> <span class="n">x</span>
 <span class="k">end</span>
-<span class="n">code_llvm</span><span class="p">(</span><span class="n">summyabs</span><span class="p">,</span><span class="n">Tuple</span><span class="p">{</span><span class="n">Vector</span><span class="p">{</span><span class="kt">Int64</span><span class="p">}})</span>
+<span class="n">code_typed</span><span class="p">(</span><span class="n">summyabs</span><span class="p">,</span><span class="n">Tuple</span><span class="p">{</span><span class="n">Vector</span><span class="p">{</span><span class="kt">Float64</span><span class="p">}})</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area"><div class="prompt output_prompt">Out[4]:</div>
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>1-element Array{Any,1}:
+ :($(Expr(:lambda, Any[:v], Any[Any[Any[:v,Array{Float64,1},0],Any[:s,Float64,2],Any[symbol(&quot;#s41&quot;),Int64,2],Any[:i,Int64,18],Any[symbol(&quot;####fy#7483#7612&quot;),Float64,18],Any[:_var0,Float64,2],Any[symbol(&quot;####fy#7483#7613&quot;),Float64,18],Any[:_var1,Float64,2]],Any[],Any[UnitRange{Int64},Tuple{Int64,Int64},Float64,Int64,Float64,Int64,Int64],Any[]], :(begin  # In[4], line 2:
+        GenSym(2) = (Base.arrayref)(v::Array{Float64,1},1)::Float64
+        ####fy#7483#7612 = (Base.box)(Float64,(Base.sitofp)(Float64,0))
+        unless (Base.box)(Base.Bool,(Base.or_int)((Base.lt_float)(GenSym(2),####fy#7483#7612::Float64)::Bool,(Base.box)(Base.Bool,(Base.and_int)((Base.box)(Base.Bool,(Base.and_int)((Base.eq_float)(GenSym(2),####fy#7483#7612::Float64)::Bool,(Base.lt_float)(####fy#7483#7612::Float64,9.223372036854776e18)::Bool)),(Base.slt_int)((Base.box)(Int64,(Base.fptosi)(Int64,####fy#7483#7612::Float64)),0)::Bool)))) goto 6
+        _var0 = (Base.box)(Base.Float64,(Base.neg_float)(GenSym(2)))
+        goto 7
+        6: 
+        _var0 = GenSym(2)
+        7: 
+        s = _var0::Float64 # In[4], line 3:
+        GenSym(3) = (Base.arraylen)(v::Array{Float64,1})::Int64
+        GenSym(0) = $(Expr(:new, UnitRange{Int64}, 2, :(((top(getfield))(Base.Intrinsics,:select_value)::I)((Base.sle_int)(2,GenSym(3))::Bool,GenSym(3),(Base.box)(Int64,(Base.sub_int)(2,1)))::Int64)))
+        #s41 = (top(getfield))(GenSym(0),:start)::Int64
+        unless (Base.box)(Base.Bool,(Base.not_int)(#s41::Int64 === (Base.box)(Base.Int,(Base.add_int)((top(getfield))(GenSym(0),:stop)::Int64,1))::Bool)) goto 1
+        2: 
+        GenSym(5) = #s41::Int64
+        GenSym(6) = (Base.box)(Base.Int,(Base.add_int)(#s41::Int64,1))
+        i = GenSym(5)
+        #s41 = GenSym(6) # In[4], line 4:
+        GenSym(4) = (Base.arrayref)(v::Array{Float64,1},i::Int64)::Float64
+        ####fy#7483#7613 = (Base.box)(Float64,(Base.sitofp)(Float64,0))
+        unless (Base.box)(Base.Bool,(Base.or_int)((Base.lt_float)(GenSym(4),####fy#7483#7613::Float64)::Bool,(Base.box)(Base.Bool,(Base.and_int)((Base.box)(Base.Bool,(Base.and_int)((Base.eq_float)(GenSym(4),####fy#7483#7613::Float64)::Bool,(Base.lt_float)(####fy#7483#7613::Float64,9.223372036854776e18)::Bool)),(Base.slt_int)((Base.box)(Int64,(Base.fptosi)(Int64,####fy#7483#7613::Float64)),0)::Bool)))) goto 15
+        _var1 = (Base.box)(Base.Float64,(Base.neg_float)(GenSym(4)))
+        goto 16
+        15: 
+        _var1 = GenSym(4)
+        16: 
+        s = (Base.box)(Base.Float64,(Base.add_float)(s::Float64,_var1::Float64))
+        3: 
+        unless (Base.box)(Base.Bool,(Base.not_int)((Base.box)(Base.Bool,(Base.not_int)(#s41::Int64 === (Base.box)(Base.Int,(Base.add_int)((top(getfield))(GenSym(0),:stop)::Int64,1))::Bool)))) goto 2
+        1: 
+        0:  # In[4], line 6:
+        return Main.x
+    end))))</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div></section><section>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[5]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-julia"><pre><span class="k">function</span><span class="nf"> summysqrt</span><span class="p">(</span><span class="n">v</span><span class="p">::</span><span class="n">Vector</span><span class="p">)</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="n">mysqrt</span><span class="p">(</span><span class="n">v</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">2</span><span class="p">:</span><span class="n">length</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+        <span class="n">s</span> <span class="o">+=</span> <span class="n">mysqrt</span><span class="p">(</span><span class="n">v</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+    <span class="k">end</span>
+    <span class="k">return</span> <span class="n">x</span>
+<span class="k">end</span>
+<span class="n">code_typed</span><span class="p">(</span><span class="n">summysqrt</span><span class="p">,</span><span class="n">Tuple</span><span class="p">{</span><span class="n">Vector</span><span class="p">{</span><span class="kt">Int64</span><span class="p">}})</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area"><div class="prompt output_prompt">Out[5]:</div>
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>1-element Array{Any,1}:
+ :($(Expr(:lambda, Any[:v], Any[Any[Any[:v,Array{Int64,1},0],Any[:s,Union{Complex{Float64},Float64},2],Any[symbol(&quot;#s41&quot;),Int64,2],Any[:i,Int64,18],Any[:_var0,Union{Complex{Float64},Float64},2],Any[:_var1,Union{Complex{Float64},Float64},2]],Any[],Any[UnitRange{Int64},Tuple{Int64,Int64},Int64,Complex{Int64},Int64,Int64,Complex{Int64},Int64,Int64],Any[]], :(begin  # In[5], line 2:
+        GenSym(2) = (Base.arrayref)(v::Array{Int64,1},1)::Int64
+        unless (Base.slt_int)(GenSym(2),0)::Bool goto 6
+        GenSym(3) = $(Expr(:new, Complex{Int64}, GenSym(2), 0))
+        _var0 = (Base.sqrt)($(Expr(:new, Complex{Float64}, :((Base.box)(Float64,(Base.sitofp)(Float64,(top(getfield))(GenSym(3),:re)::Int64))), :((Base.box)(Float64,(Base.sitofp)(Float64,(top(getfield))(GenSym(3),:im)::Int64))))))::Complex{Float64}
+        goto 7
+        6: 
+        _var0 = (Base.Math.box)(Base.Math.Float64,(Base.Math.sqrt_llvm)((Base.box)(Float64,(Base.sitofp)(Float64,GenSym(2)))))::Float64
+        7: 
+        s = _var0::Union{Complex{Float64},Float64} # In[5], line 3:
+        GenSym(4) = (Base.arraylen)(v::Array{Int64,1})::Int64
+        GenSym(0) = $(Expr(:new, UnitRange{Int64}, 2, :(((top(getfield))(Base.Intrinsics,:select_value)::I)((Base.sle_int)(2,GenSym(4))::Bool,GenSym(4),(Base.box)(Int64,(Base.sub_int)(2,1)))::Int64)))
+        #s41 = (top(getfield))(GenSym(0),:start)::Int64
+        unless (Base.box)(Base.Bool,(Base.not_int)(#s41::Int64 === (Base.box)(Base.Int,(Base.add_int)((top(getfield))(GenSym(0),:stop)::Int64,1))::Bool)) goto 1
+        2: 
+        GenSym(7) = #s41::Int64
+        GenSym(8) = (Base.box)(Base.Int,(Base.add_int)(#s41::Int64,1))
+        i = GenSym(7)
+        #s41 = GenSym(8) # In[5], line 4:
+        GenSym(5) = (Base.arrayref)(v::Array{Int64,1},i::Int64)::Int64
+        unless (Base.slt_int)(GenSym(5),0)::Bool goto 15
+        GenSym(6) = $(Expr(:new, Complex{Int64}, GenSym(5), 0))
+        _var1 = (Base.sqrt)($(Expr(:new, Complex{Float64}, :((Base.box)(Float64,(Base.sitofp)(Float64,(top(getfield))(GenSym(6),:re)::Int64))), :((Base.box)(Float64,(Base.sitofp)(Float64,(top(getfield))(GenSym(6),:im)::Int64))))))::Complex{Float64}
+        goto 16
+        15: 
+        _var1 = (Base.Math.box)(Base.Math.Float64,(Base.Math.sqrt_llvm)((Base.box)(Float64,(Base.sitofp)(Float64,GenSym(5)))))::Float64
+        16: 
+        s = s::Union{Complex{Float64},Float64} + _var1::Union{Complex{Float64},Float64}::Union{Complex{Float64},Float64}
+        3: 
+        unless (Base.box)(Base.Bool,(Base.not_int)((Base.box)(Base.Bool,(Base.not_int)(#s41::Int64 === (Base.box)(Base.Int,(Base.add_int)((top(getfield))(GenSym(0),:stop)::Int64,1))::Bool)))) goto 2
+        1: 
+        0:  # In[5], line 6:
+        return Main.x
+    end))))</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div></section><section>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Homoiconicity">Homoiconicity<a class="anchor-link" href="#Homoiconicity">&#182;</a></h3>
+</div>
+</div>
+</div><div class="fragment">
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[6]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-julia"><pre><span class="n">ex</span><span class="o">=</span><span class="p">:(</span><span class="k">function</span><span class="nf"> summysqrt</span><span class="p">(</span><span class="n">v</span><span class="p">::</span><span class="n">Vector</span><span class="p">)</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="n">mysqrt</span><span class="p">(</span><span class="n">v</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">2</span><span class="p">:</span><span class="n">length</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+            <span class="n">s</span> <span class="o">+=</span> <span class="n">mysqrt</span><span class="p">(</span><span class="n">v</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+        <span class="k">end</span>
+        <span class="k">return</span> <span class="n">x</span>
+    <span class="k">end</span><span class="p">)</span>
+<span class="n">Meta</span><span class="o">.</span><span class="n">show_sexpr</span><span class="p">(</span><span class="n">ex</span><span class="p">)</span>
 </pre></div>
 
 </div>
@@ -506,76 +719,30 @@ L:                                                ; preds = %top
 
 <div class="output_area"><div class="prompt"></div>
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>
-define i64 @julia_summyabs_21750(%jl_value_t*) {
-top:
-  %1 = getelementptr inbounds %jl_value_t* %0, i64 1
-  %2 = bitcast %jl_value_t* %1 to i64*
-  %3 = load i64* %2, align 8
-  %4 = icmp eq i64 %3, 0
-  br i1 %4, label %oob, label %idxend
-
-oob:                                              ; preds = %top
-  %5 = alloca i64, align 8
-  store i64 1, i64* %5, align 8
-  call void @jl_bounds_error_ints(%jl_value_t* %0, i64* %5, i64 1)
-  unreachable
-
-idxend:                                           ; preds = %top
-  %6 = bitcast %jl_value_t* %0 to i8**
-  %7 = load i8** %6, align 8
-  %8 = bitcast i8* %7 to i64*
-  %9 = load i64* %8, align 8
-  %10 = call i64 @julia_myabs_21607(i64 %9)
-  %11 = load i64* %2, align 8
-  %12 = icmp sgt i64 %11, 1
-  %13 = select i1 %12, i64 %11, i64 1
-  %14 = icmp eq i64 %13, 1
-  br i1 %14, label %L5, label %L
-
-L:                                                ; preds = %idxend2, %idxend
-  %&quot;#s41.0&quot; = phi i64 [ %19, %idxend2 ], [ 2, %idxend ]
-  %s.0 = phi i64 [ %25, %idxend2 ], [ %10, %idxend ]
-  %15 = add i64 %&quot;#s41.0&quot;, -1
-  %16 = load i64* %2, align 8
-  %17 = icmp ult i64 %15, %16
-  br i1 %17, label %idxend2, label %oob1
-
-oob1:                                             ; preds = %L
-  %18 = alloca i64, align 8
-  store i64 %&quot;#s41.0&quot;, i64* %18, align 8
-  call void @jl_bounds_error_ints(%jl_value_t* %0, i64* %18, i64 1)
-  unreachable
-
-idxend2:                                          ; preds = %L
-  %19 = add i64 %&quot;#s41.0&quot;, 1
-  %20 = load i8** %6, align 8
-  %21 = bitcast i8* %20 to i64*
-  %22 = getelementptr i64* %21, i64 %15
-  %23 = load i64* %22, align 8
-  %24 = call i64 @julia_myabs_21607(i64 %23)
-  %25 = add i64 %24, %s.0
-  %26 = icmp eq i64 %&quot;#s41.0&quot;, %13
-  br i1 %26, label %L5, label %L
-
-L5:                                               ; preds = %idxend2, %idxend
-  %s.1 = phi i64 [ %10, %idxend ], [ %25, %idxend2 ]
-  ret i64 %s.1
-}
-</pre>
+<pre>(:function, (:call, :summysqrt, (:(::), :v, :Vector)), (:block,
+    :( # In[6], line 2:),
+    (:(=), :s, (:call, :mysqrt, (:ref, :v, 1))),
+    :( # In[6], line 3:),
+    (:for, (:(=), :i, (:(:), 2, (:call, :length, :v))), (:block,
+        :( # In[6], line 4:),
+        (:+=, :s, (:call, :mysqrt, (:ref, :v, :i)))
+      )),
+    :( # In[6], line 6:),
+    (:return, :x)
+  ))</pre>
 </div>
 </div>
 
 </div>
 </div>
 
-</div></section></section><section><section>
+</div></div></section></section><section><section>
 <div class="cell border-box-sizing text_cell rendered">
 <div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Tensor-operations-in-Julia">Tensor operations in Julia<a class="anchor-link" href="#Tensor-operations-in-Julia">&#182;</a></h3><ul>
+<h2 id="TensorOperations.jl">TensorOperations.jl<a class="anchor-link" href="#TensorOperations.jl">&#182;</a></h2><ul>
 <li>general tensor operations: permutations, partial traces, contractions<ul>
 <li>graphical: <img src="tensorcontraction.png" alt="tensor operation"></li>
 <li>index notation with Einstein summation convention:
@@ -589,7 +756,7 @@ $D_{a,b,c} = A_{a,d,e,c}\cdot B_{f,e,b,d,f}+C_{c,b,a}$</li>
 </div></section><section>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[6]:</div>
+<div class="prompt input_prompt">In&nbsp;[7]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-julia"><pre><span class="n">n</span><span class="o">=</span><span class="mi">3</span><span class="p">;</span>
@@ -619,11 +786,11 @@ $D_{a,b,c} = A_{a,d,e,c}\cdot B_{f,e,b,d,f}+C_{c,b,a}$</li>
 <div class="output">
 
 
-<div class="output_area"><div class="prompt output_prompt">Out[6]:</div>
+<div class="output_area"><div class="prompt output_prompt">Out[7]:</div>
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>9.24156474531335e-15</pre>
+<pre>5.66159317245823e-15</pre>
 </div>
 
 </div>
@@ -634,7 +801,7 @@ $D_{a,b,c} = A_{a,d,e,c}\cdot B_{f,e,b,d,f}+C_{c,b,a}$</li>
 </div></section><section>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[7]:</div>
+<div class="prompt input_prompt">In&nbsp;[8]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-julia"><pre><span class="k">function</span><span class="nf"> f1</span><span class="o">!</span><span class="p">(</span><span class="n">D</span><span class="p">,</span><span class="n">n</span><span class="p">,</span><span class="n">A</span><span class="p">,</span><span class="n">B</span><span class="p">,</span><span class="n">C</span><span class="p">)</span>
@@ -660,7 +827,7 @@ $D_{a,b,c} = A_{a,d,e,c}\cdot B_{f,e,b,d,f}+C_{c,b,a}$</li>
 <div class="output">
 
 
-<div class="output_area"><div class="prompt output_prompt">Out[7]:</div>
+<div class="output_area"><div class="prompt output_prompt">Out[8]:</div>
 
 
 <div class="output_text output_subarea output_execute_result">
@@ -675,7 +842,7 @@ $D_{a,b,c} = A_{a,d,e,c}\cdot B_{f,e,b,d,f}+C_{c,b,a}$</li>
 </div></section><section>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[8]:</div>
+<div class="prompt input_prompt">In&nbsp;[9]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-julia"><pre><span class="n">n</span><span class="o">=</span><span class="mi">30</span><span class="p">;</span>
@@ -689,10 +856,10 @@ $D_{a,b,c} = A_{a,d,e,c}\cdot B_{f,e,b,d,f}+C_{c,b,a}$</li>
 </div>
 </div>
 
-</div></section><section>
+</div><div class="fragment">
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[9]:</div>
+<div class="prompt input_prompt">In&nbsp;[11]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-julia"><pre><span class="p">@</span><span class="n">time</span> <span class="n">f1</span><span class="o">!</span><span class="p">(</span><span class="n">D</span><span class="p">,</span><span class="n">n</span><span class="p">,</span><span class="n">A</span><span class="p">,</span><span class="n">B</span><span class="p">,</span><span class="n">C</span><span class="p">);</span>
@@ -709,8 +876,8 @@ $D_{a,b,c} = A_{a,d,e,c}\cdot B_{f,e,b,d,f}+C_{c,b,a}$</li>
 
 <div class="output_area"><div class="prompt"></div>
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>  5.910319 seconds (14.34 k allocations: 658.876 KB)
-  0.019754 seconds (5.79 k allocations: 6.808 MB)
+<pre>  5.893492 seconds (4 allocations: 160 bytes)
+  0.024428 seconds (158 allocations: 6.599 MB, 42.89% gc time)
 </pre>
 </div>
 </div>
@@ -718,7 +885,7 @@ $D_{a,b,c} = A_{a,d,e,c}\cdot B_{f,e,b,d,f}+C_{c,b,a}$</li>
 </div>
 </div>
 
-</div></section></section><section><section>
+</div></div></section></section><section><section>
 <div class="cell border-box-sizing text_cell rendered">
 <div class="prompt input_prompt">
 </div>
@@ -749,7 +916,7 @@ $D_{a,b,c} = A_{a,d,e,c}\cdot B_{f,e,b,d,f}+C_{c,b,a}$</li>
 </div></section><section>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[10]:</div>
+<div class="prompt input_prompt">In&nbsp;[12]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-julia"><pre><span class="n">A</span><span class="o">=</span><span class="n">randn</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="mi">10</span><span class="p">);</span>
@@ -763,10 +930,11 @@ $D_{a,b,c} = A_{a,d,e,c}\cdot B_{f,e,b,d,f}+C_{c,b,a}$</li>
 </div></section><section>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[12]:</div>
+<div class="prompt input_prompt">In&nbsp;[16]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-julia"><pre><span class="p">@</span><span class="n">time</span> <span class="n">permutedims</span><span class="o">!</span><span class="p">(</span><span class="n">B</span><span class="p">,</span><span class="n">A</span><span class="p">,[</span><span class="mi">8</span><span class="p">,</span><span class="mi">7</span><span class="p">,</span><span class="mi">6</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">]);</span>
+<div class=" highlight hl-julia"><pre><span class="p">@</span><span class="n">time</span> <span class="n">copy</span><span class="o">!</span><span class="p">(</span><span class="n">B</span><span class="p">,</span><span class="n">A</span><span class="p">);</span>
+<span class="p">@</span><span class="n">time</span> <span class="n">permutedims</span><span class="o">!</span><span class="p">(</span><span class="n">B</span><span class="p">,</span><span class="n">A</span><span class="p">,[</span><span class="mi">8</span><span class="p">,</span><span class="mi">7</span><span class="p">,</span><span class="mi">6</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">]);</span>
 <span class="p">@</span><span class="n">time</span> <span class="p">@</span><span class="n">tensor</span> <span class="n">B</span><span class="p">[</span><span class="mi">8</span><span class="p">,</span><span class="mi">7</span><span class="p">,</span><span class="mi">6</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">A</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">6</span><span class="p">,</span><span class="mi">7</span><span class="p">,</span><span class="mi">8</span><span class="p">];</span>
 </pre></div>
 
@@ -780,39 +948,9 @@ $D_{a,b,c} = A_{a,d,e,c}\cdot B_{f,e,b,d,f}+C_{c,b,a}$</li>
 
 <div class="output_area"><div class="prompt"></div>
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>  1.906119 seconds (40 allocations: 1.406 KB)
-  0.353497 seconds (32 allocations: 1.406 KB)
-</pre>
-</div>
-</div>
-
-</div>
-</div>
-
-</div></section><section>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[14]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-julia"><pre><span class="p">@</span><span class="n">time</span> <span class="n">copy</span><span class="o">!</span><span class="p">(</span><span class="n">B</span><span class="p">,</span><span class="n">A</span><span class="p">);</span>
-<span class="p">@</span><span class="n">time</span> <span class="n">permutedims</span><span class="o">!</span><span class="p">(</span><span class="n">B</span><span class="p">,</span><span class="n">A</span><span class="p">,[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">6</span><span class="p">,</span><span class="mi">7</span><span class="p">,</span><span class="mi">8</span><span class="p">]);</span>
-<span class="p">@</span><span class="n">time</span> <span class="p">@</span><span class="n">tensor</span> <span class="n">B</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">6</span><span class="p">,</span><span class="mi">7</span><span class="p">,</span><span class="mi">8</span><span class="p">]</span> <span class="o">=</span> <span class="n">A</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">6</span><span class="p">,</span><span class="mi">7</span><span class="p">,</span><span class="mi">8</span><span class="p">];</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area"><div class="prompt"></div>
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>  0.101288 seconds (4 allocations: 160 bytes)
-  0.127674 seconds (40 allocations: 1.406 KB)
-  0.132622 seconds (32 allocations: 1.406 KB)
+<pre>  0.120780 seconds (4 allocations: 160 bytes)
+  2.138513 seconds (40 allocations: 1.406 KB)
+  0.309341 seconds (32 allocations: 1.406 KB)
 </pre>
 </div>
 </div>
@@ -1003,6 +1141,19 @@ Memory is linear $\Rightarrow$ <code>transpose</code> require unfavorable memory
 <h4 id="More-flexible-index-notation;-mixed-combinations-of-manual-loops,-creating-slices-and-applying-tensor-operations">More flexible index notation; mixed combinations of manual loops, creating slices and applying tensor operations<a class="anchor-link" href="#More-flexible-index-notation;-mixed-combinations-of-manual-loops,-creating-slices-and-applying-tensor-operations">&#182;</a></h4><h4 id="Multi-threading?-GPU?">Multi-threading? GPU?<a class="anchor-link" href="#Multi-threading?-GPU?">&#182;</a></h4>
 </div>
 </div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-julia"><pre>
+</pre></div>
+
+</div>
+</div>
+</div>
+
 </div></section></section>
 </div>
 </div>
